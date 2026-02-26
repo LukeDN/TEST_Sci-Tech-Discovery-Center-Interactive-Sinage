@@ -80,11 +80,7 @@ function SSEController() {
     };
   }, [navigate]);
 
-  // This component renders nothing
-  return (
-    connectionState === 0 ? <div className="w-full h-screen bg-black flex items-center justify-center text-white">Loading....</div> : null
-
-  );
+  return (null);
 }
 
 // 2. Main App Component
