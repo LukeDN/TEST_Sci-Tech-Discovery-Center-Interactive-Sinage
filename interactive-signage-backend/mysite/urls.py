@@ -27,7 +27,7 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    artifacts_root = os.path.join(settings.BASE_DIR, '../frontend/dist/artifacts')
+    artifacts_root = os.path.join(settings.BASE_DIR, '../frontend/public/artifacts')
     
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     

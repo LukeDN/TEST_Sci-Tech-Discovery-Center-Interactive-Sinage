@@ -7,12 +7,12 @@ import ScanPage from './components/ScanPage';
 function SSEController() {
   const navigate = useNavigate();
   const [connectionState, setConnectionState] = useState(0); // 0: connecting, 1: open
-  
+
   function waitForEventSourceOpen(eventSource) {
     if (eventSource.readyState === 1) {
       return Promise.resolve();
     }
-    
+
     return new Promise((resolve, reject) => {
       const openListener = () => {
         eventSource.removeEventListener('open', openListener);
@@ -27,8 +27,9 @@ function SSEController() {
       }
       eventSource.addEventListener('open', openListener);
       eventSource.addEventListener('error', errorListener);
-    })};
-  
+    })
+  };
+
   useEffect(() => {
     console.log("Setting up EventSource connection...");
     const eventSource = new EventSource('/api/events/');
@@ -41,7 +42,7 @@ function SSEController() {
     }
     openConnection()
 
-    
+
 
     // Map event types directly to routes
     const eventTypeMap = {
@@ -49,7 +50,7 @@ function SSEController() {
       'button_press': '/video',
       'button_press_timeout': '/video'
     };
-  
+
     // Event listeners
     eventSource.addEventListener('scanned_id', (event) => {
       const data = JSON.parse(event.data);
@@ -62,22 +63,22 @@ function SSEController() {
       const data = JSON.parse(event.data);
       console.log("Received button_press event:", data);
       const targetPath = eventTypeMap['button_press'];
-      navigate(targetPath, { lang: data["language"] });
+      navigate(targetPath, { state: { lang: data["language"] } });
     });
 
     eventSource.addEventListener('button_press_timeout', (event) => {
       const data = JSON.parse(event.data);
       console.log("Received button_press_timeout event:", data);
       const targetPath = eventTypeMap['button_press_timeout'];
-      navigate(targetPath, { lang: data["language"] }); 
+      navigate(targetPath, { state: { lang: data["language"] } });
     });
 
     // Cleanup
     return () => {
-      console.log("Supposed to close EventSource connection. Keeping Open...");
-      //eventSource.close();
+      console.log("Closing EventSource connection...");
+      eventSource.close();
     };
-  }, [navigate]); 
+  }, [navigate]);
 
   // This component renders nothing
   return (
@@ -88,20 +89,20 @@ function SSEController() {
 
 // 2. Main App Component
 function App() {
-  
+
   return (
     <main>
       <BrowserRouter>
-        
-        <SSEController /> 
 
-        
+        <SSEController />
+
+
 
 
         <Routes>
-          <Route path="/" element={<ScanPage/>}/>
-          <Route path="/exploration" element={<LangaugeSelect/>}/>
-          <Route path="/video" element={<VideoScreen/>}/>
+          <Route path="/" element={<ScanPage />} />
+          <Route path="/exploration" element={<LangaugeSelect />} />
+          <Route path="/video" element={<VideoScreen />} />
         </Routes>
       </BrowserRouter>
     </main>

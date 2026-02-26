@@ -36,15 +36,13 @@ def getpath(binary_id: str, lang: str = default) -> dict:
             relative_path = path_dict.get(lang, path_dict.get("en"))
             
             if relative_path:
-                # Construct absolute path
-                # Structure: ...Root/interactive-signage-backend/polls/getpath.py
-                # We need to go up 3 levels where 'artifacts' folder is
-                current_dir = os.path.dirname(os.path.abspath(__file__))
-                backend_root = os.path.dirname(current_dir)
-                repo_root = os.path.dirname(backend_root)
+                # Return URL path compatible with frontend (and Django static serving)
+                # Instead of absolute file path, we return the relative URL path
+                # The frontend expects a URL it can fetch.
                 
-                video_path = os.path.join(repo_root, relative_path)
-                return {"name": name_val, "video_path": video_path}
+                # Ensure forward slashes for URLs even on Windows
+                url_path = f"/{relative_path.replace(os.path.sep, '/')}"
+                return {"name": name_val, "video_path": url_path}
             
             return {"name": name_val, "video_path": None}
 
